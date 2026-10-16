@@ -77,19 +77,15 @@
     <section>
       <h2 class="section-title">Album Kecil Kita</h2><p class="section-sub">Kenangan kita, satu per satu.</p>
       <div class="album" id="album">
-        <div class="photo active"><div class="photo-frame"><img src="foto-1.jpg" alt="Kenangan pertama" onerror="this.style.display='none'"></div><small>Kenangan pertama</small></div>
-        <div class="photo"><div class="photo-frame"><img src="foto-2.jpg" alt="Senyum kita" onerror="this.style.display='none'"></div><small>Senyum kita</small></div>
-        <div class="photo"><div class="photo-frame"><img src="foto-3.jpg" alt="Hari yang indah" onerror="this.style.display='none'"></div><small>Hari yang indah</small></div>
-        <div class="photo"><div class="photo-frame"><img src="foto-4.jpg" alt="Cerita kita" onerror="this.style.display='none'"></div><small>Cerita kita</small></div>
-        <div class="photo"><div class="photo-frame"><img src="foto-5.jpg" alt="Momen sederhana" onerror="this.style.display='none'"></div><small>Momen sederhana</small></div>
-        <div class="photo"><div class="photo-frame"><img src="foto-6.jpg" alt="Tetap kamu" onerror="this.style.display='none'"></div><small>Tetap kamu</small></div>
-        <div class="photo"><div class="photo-frame"><img src="foto-7.jpg" alt="Senyum terakhir" onerror="this.style.display='none'"></div><small>Senyum yang selalu kuingat</small></div>
+        <div class="photo active"><div class="photo-frame"><img src="foto-1.jpg" alt="Momen kita" onerror="this.style.display='none'"></div><small>Momen kita</small></div>
+        <div class="photo"><div class="photo-frame"><img src="foto-2.jpg" alt="Hari yang kita lewati" onerror="this.style.display='none'"></div><small>Hari yang kita lewati</small></div>
+        <div class="photo"><div class="photo-frame"><img src="foto-5.jpg" alt="Kenangan di cermin" onerror="this.style.display='none'"></div><small>Kenangan di cermin</small></div>
+        <div class="photo"><div class="photo-frame"><img src="foto-7.jpg" alt="Senyum yang kuingat" onerror="this.style.display='none'"></div><small>Senyum yang selalu kuingat</small></div>
         <div class="photo"><div class="photo-frame"><img src="foto-8.jpg" alt="Momen manis" onerror="this.style.display='none'"></div><small>Momen manis yang sederhana</small></div>
-        <div class="photo"><div class="photo-frame"><img src="foto-9.jpg" alt="Tawa kita" onerror="this.style.display='none'"></div><small>Tawa yang ingin kuingat lagi</small></div>
         <div class="photo"><div class="photo-frame"><img src="foto-10.jpg" alt="Kenangan di cermin" onerror="this.style.display='none'"></div><small>Kenangan di balik cermin</small></div>
       </div>
-      <div class="album-progress" id="albumProgress">Kenangan 1 dari 10</div>
-      <div class="album-dots" id="albumDots"><i class="active"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      <div class="album-progress" id="albumProgress">Kenangan 1 dari 6</div>
+      <div class="album-dots" id="albumDots"><i class="active"></i><i></i><i></i><i></i><i></i><i></i></div>
     </section>
 
     <div id="book" class="book">
@@ -112,16 +108,18 @@
       </section>
     </div>
   </main>
-  <footer>made with intention, for you.</footer>
+  <footer>dibuat dengan bener benr tulus</footer>
   <div class="lightbox" id="lightbox"><span class="close" id="close">×</span><img id="lightboxImage" alt="Foto kenangan"></div>
 
   <script>
     const no = document.getElementById('no'), yes = document.getElementById('yes'), hint = document.getElementById('hint');
-    const whatsappNumber = '62895803574900';
+    const formspreeEndpoint = 'https://formspree.io/f/mqpewlyv';
     const bgMusic = document.getElementById('bgMusic'), musicToggle = document.getElementById('musicToggle');
     async function startMusic() { try { await bgMusic.play(); musicToggle.textContent = '♫ musik menyala'; } catch (error) { musicToggle.textContent = '♫ putar musik'; } }
     musicToggle.addEventListener('click', async () => { if (bgMusic.paused) { await startMusic(); } else { bgMusic.pause(); musicToggle.textContent = '♫ putar musik'; } });
-    document.addEventListener('pointerdown', () => { if (bgMusic.paused) startMusic(); }, {once:true});
+    document.addEventListener('pointerdown', () => { if (bgMusic.paused) startMusic(); }, {passive:true});
+    bgMusic.addEventListener('canplay', () => { if (bgMusic.paused) startMusic(); });
+    document.addEventListener('visibilitychange', () => { if (!document.hidden && bgMusic.paused) startMusic(); });
     startMusic();
     const dodgeMessages = ['sengg maaf 😭', 'attu ihh sengg 😭', 'mintaaf 🥺', 'maafin, gak bakal diulang', 'janji bener-bener gak bakal diulang 🤍'];
     let attempts = 0;
@@ -168,11 +166,15 @@
         setTimeout(() => flower.remove(), 1900);
       }
     }
-    yes.addEventListener('click', () => {
+    yes.addEventListener('click', async () => {
       hint.textContent = 'Makasih ya sayangku, duniaku. Aku bener-bener gak bakal ngelakuin itu lagi. Kamu lihat aja sikap aku ke depannya 🤍';
       yes.textContent = 'Terima kasih, sayang 💗';
       yes.style.transform = 'translate(-50%, -50%) scale(1.25)';
-      if (whatsappNumber !== 'GANTI_DENGAN_NOMOR_KAMU') window.open(`https://wa.me/${whatsappNumber}?text=${encodeURIComponent('iya aku maafin')}`, '_blank');
+      if (formspreeEndpoint !== 'GANTI_ENDPOINT_FORMSPREE') {
+        try {
+          await fetch(formspreeEndpoint, { method:'POST', headers:{'Content-Type':'application/json', Accept:'application/json'}, body:JSON.stringify({ jawaban:'Iya, aku maafin', waktu:new Date().toISOString() }) });
+        } catch (error) { /* Pesan lokal tetap tampil walau notifikasi gagal. */ }
+      }
       if (!confettiTimer) { releaseConfetti(); confettiTimer = setInterval(releaseConfetti, 650); }
     });
     const slides = [...document.querySelectorAll('.photo')], dots = [...document.querySelectorAll('.album-dots i')], progress = document.getElementById('albumProgress');
